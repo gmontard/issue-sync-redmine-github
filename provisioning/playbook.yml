@@ -1,0 +1,52 @@
+---
+- hosts: all
+  remote_user: vagrant
+  vars:
+    rvm1_rubies:
+      - 'ruby-2.1.2'
+    rvm1_install_flags: '--auto-dotfiles --user-install'
+    rvm1_install_path: '/home/{{ ansible_ssh_user }}/.rvm'
+
+
+  pre_tasks:
+    - locale_gen: name=en_US.UTF-8 state=present
+
+    - apt: update_cache=yes cache_valid_time=3600
+
+    - name: Install base packages
+      action: apt pkg={{item}} state=installed
+      with_items:
+        - vim
+        - ftp
+        - git
+        - zip
+        - unzip
+        - htop
+        - tree
+        - curl
+        - build-essential
+        - libxml2-dev
+        - libxslt1-dev
+        - postgresql-server-dev-9.3
+
+  roles:
+    - { role: rvm_io.rvm1-ruby, tags: ruby, sudo: false }
+    - postgresql
+
+  tasks:
+
+    - name: rvm | source rvm to .profile
+      lineinfile: dest=/home/{{ansible_ssh_user}}/.profile state=present regexp='\.rvm\/scripts' line='test -f $HOME/.rvm/scripts/rvm && source $HOME/.rvm/scripts/rvm'
+      sudo: false
+
+    - name: bashrc | /vagrant as default directory
+      shell: echo "cd /vagrant" >> /home/vagrant/.bashrc
+      sudo: false
+
+    - name: bashrc | set LC_ALL
+      shell: echo "export LC_ALL=en_US.UTF-8" >> /home/vagrant/.bashrc
+      sudo: false
+
+    - name: bashrc | set LANG
+      shell: echo "export LANG=en_US.UTF-8" >> /home/vagrant/.bashrc
+      sudo: false
