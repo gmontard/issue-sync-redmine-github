@@ -33,6 +33,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     }
   end
 
+  # PostgreSQL was using LATIN1 instead of UTF-8 as a server_encoding value
+  config.vm.provision :shell, :inline => "echo 'LC_ALL=\"en_US.UTF-8\"' > /etc/default/locale"
+
   # Provider-specific configuration.
   # For VirtualBox:
   config.vm.provider :virtualbox do |vm, override|

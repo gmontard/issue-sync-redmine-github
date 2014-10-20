@@ -1,18 +1,17 @@
----
+# file: postgresql/meta/main.yml
 
 galaxy_info:
-  author: zenoamaro
-  description: A role for installing and configuring PostgreSQL
-  license: MIT
+  author: pjan vandaele
+  company: ANXS
+  description: "Install and configure PostgreSQL, dependencies, extensions, databases and users."
   min_ansible_version: 1.4
-
+  license: MIT
   platforms:
-    - name: Ubuntu
-      versions:
-        - precise
-
+  - name: Ubuntu
+    versions:
+    - all
   categories:
-    - database
-    - database:sql
+  - database
+  - database:sql
 
 dependencies: []

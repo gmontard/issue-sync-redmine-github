@@ -1,86 +1,59 @@
-PostgreSQL role for Ansible
-===========================
+## ANXS - PostgreSQL [![Build Status](https://travis-ci.org/ANXS/postgresql.png)](https://travis-ci.org/ANXS/postgresql)
 
-A role for deploying and configuring [PostgreSQL](http://www.postgresql.org/) and extensions on unix hosts using [Ansible](http://www.ansibleworks.com/).
-
-It can additionally be used as a playbook for quickly provisioning hosts.
-
-Vagrant machines are provided to produce a boxed install of PostgreSQL or a VM for integration testing.
+Ansible role which installs and configures PostgreSQL, extensions, databases and users.
 
 
-Supports
---------
-
-Supported PostgreSQL versions:
-
-- PostgreSQL 9.3
-
-Supported targets:
-
-- Ubuntu 12.04 "Precise Pangolin"
-- Other LTS ubuntu versions (untested)
-- Debian (untested)
-
-Installation methods:
-
-- Binary packages from the official repositories at [postgresql.org](http://www.postgresql.org/download/)
-
-Available extensions (under a switch):
-
-- Development headers - `postgresql_dev_headers`
-- The [psycopg2](http://initd.org/psycopg/) driver for Python - `postgresql_psycopg2`
-- [PostGIS](http://postgis.net/) - `postgresql_postgis`
+#### Requirements & Dependencies
+- Tested on Ansible 1.4 or higher.
+- ANXS.monit ([Galaxy](https://galaxy.ansible.com/list#/roles/502)/[GH](https://github.com/ANXS/monit)) if you want monit protection (in that case, you should set `monit_protection: true`)
 
 
-Usage
------
+#### Variables
 
-Clone this repo into your roles directory:
+```yaml
+# Basic settings
+postgresql_version: 9.3
+postgresql_encoding: 'UTF-8'
+postgresql_locale: 'en_US.UTF-8'
 
-    $ git clone https://github.com/zenoamaro/ansible-postgresql.git roles/postgresql
+postgresql_admin_user: "postgres"
+postgresql_default_auth_method: "trust"
 
-And add it to your play's roles:
+postgresql_cluster_name: "main"
+postgresql_cluster_reset: false
 
-    - hosts: ...
-      roles:
-        - postgresql
-        - ...
+# List of databases to be created (optional)
+postgresql_databases:
+  - name: foobar
+    hstore: yes         # flag to install the hstore extension on this database (yes/no)
+    uuid_ossp: yes      # flag to install the uuid-ossp extension on this database (yes/no)
 
-This roles comes preloaded with almost every available default. You can override each one in your hosts/group vars, in your inventory, or in your play. See the annotated defaults in `defaults/main.yml` for help in configuration. All provided variables start with `postgresql_`.
+# List of users to be created (optional)
+postgresql_users:
+  - name: baz
+    pass: pass
+    encrypted: no       # denotes if the password is already encrypted.
 
-You can also use the role as a playbook. You will be asked which hosts to provision, and you can further configure the play by using `--extra-vars`.
+# List of user privileges to be applied (optional)
+postgresql_user_privileges:
+  - name: baz          # user name
+    db: foobar         # database
+    priv: "ALL"        # privilege string format: example: INSERT,UPDATE/table:SELECT/anothertable:ALL
+```
 
-    $ ansible-playbook -i inventory --extra-vars='{...}' main.yml
-
-To provision a standalone PostgreSQL box, start the `boxed` VM, which is a Ubuntu 12.04 box:
-
-    $ vagrant up boxed
-
-You will find PostgreSQL listening on the VM's `5432` port on address `192.168.33.20` in the private network. You can then connect to it as any user. Please note that this is highly insecure, so if you're going to publish this VM you'll want to provide actual authentication.
-
-Run the tests by provisioning the appropriate VM:
-
-    $ vagrant up test-ubuntu-precise
-
-At the moment, `ubuntu-precise` is the only test VM available.
-
-
-Still to do
------------
-
-- Add repositories, tasks and test VMs for other distros
-- Allow installation from sources if requested
-- Add support for different PostgreSQL versions (9.x and possibly 8.x)
-- Add support for PostgreSQL clusters
-- Add support for [PgBouncer](http://wiki.postgresql.org/wiki/PgBouncer)
-- Try to make the boxed VM more secure by default
-- Add links to the relevant documentation in configuration files
-- Provide a library of custom modules
+There's a lot more knobs and bolts to set, which you can find in the defaults/main.yml
 
 
-Changelog
----------
+#### License
 
-### 0.1
+Licensed under the MIT License. See the LICENSE file for details.
 
-Initial version.
+#### Thanks
+
+To the contributors:
+- [Ralph von der Heyden](https://github.com/ralph)
+
+
+#### Feedback, bug-reports, requests, ...
+
+Are [welcome](https://github.com/ANXS/postgresql/issues)!

@@ -1,47 +1,27 @@
----
+# file: postgresql/tasks/install.yml
 
-# Official PostgreSQL [repository] for debian-based distributions
-# [repository]: http://www.postgresql.org/download/
+- name: PostgreSQL | Make sure the dependencies are installed
+  apt:
+    pkg: "{{item}}"
+    state: present
+  with_items: ["python-psycopg2", "python-pycurl"]
 
-- name: Adding APT repository key
-  when: ansible_os_family == 'Debian'
-  sudo: yes
-  register: _repo_key
+- name: PostgreSQL | Add PostgreSQL repository apt-key
   apt_key:
     id: ACCC4CF8
-    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
-  tags:
-    - postgresql
-    - db
-    - repo
+    url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+    state: present
 
-- name: Add PostgreSQL official APT repository
-  when: ansible_os_family == 'Debian'
-  sudo: yes
-  register: _repo
+- name: PostgreSQL | Add PostgreSQL repository
   apt_repository:
-    repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ansible_distribution_release}}-pgdg main"
-  tags:
-    - postgresql
-    - db
-    - repo
+    repo: 'deb http://apt.postgresql.org/pub/repos/apt/ {{ansible_distribution_release}}-pgdg main'
+    state: present
 
-- name: APT update
-  when: ansible_pkg_mgr == 'apt' and (_repo_key.changed or _repo.changed)
-  sudo: yes
+- name: PostgreSQL | Install PostgreSQL
   apt:
-    update_cache: yes
-  tags:
-    - postgresql
-    - db
-    - repo
-
-- name: Install PostgreSQL
-  when: ansible_os_family == 'Debian'
-  sudo: yes
-  apt:
-    name: "postgresql-{{postgresql_version}}"
-  tags:
-    - postgresql
-    - db
-    - deps
+    name: "{{item}}"
+    state: present
+  environment: postgresql_env
+  with_items:
+    - "postgresql-{{postgresql_version}}"
+    - "postgresql-client-{{postgresql_version}}"

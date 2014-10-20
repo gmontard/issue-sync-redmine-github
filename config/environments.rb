@@ -4,7 +4,7 @@
 #This is automatically configured on Heroku, you only need to worry if you also
 #want to run your app locally
 configure :production, :development do
-	db = URI.parse(ENV['DATABASE_URL'] || 'postgres://localhost/mydb')
+	db = URI.parse(ENV['DATABASE_URL'] || 'postgres://localhost/bugsync_development')
 
 	ActiveRecord::Base.establish_connection(
 			:adapter => db.scheme == 'postgres' ? 'postgresql' : db.scheme,

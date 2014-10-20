@@ -2,6 +2,12 @@
 - hosts: all
   remote_user: vagrant
   vars:
+    postgresql_version: 9.3
+    postgresql_encoding: 'UTF-8'
+    postgresql_locale: 'en_US.UTF-8'
+    postgresql_admin_user: "postgres"
+    postgresql_default_auth_method: "trust"
+
     rvm1_rubies:
       - 'ruby-2.1.2'
     rvm1_install_flags: '--auto-dotfiles --user-install'
@@ -27,7 +33,6 @@
         - build-essential
         - libxml2-dev
         - libxslt1-dev
-        - postgresql-server-dev-9.3
 
   roles:
     - { role: rvm_io.rvm1-ruby, tags: ruby, sudo: false }
@@ -50,3 +55,11 @@
     - name: bashrc | set LANG
       shell: echo "export LANG=en_US.UTF-8" >> /home/vagrant/.bashrc
       sudo: false
+
+    - name: Install postgresql Dev package
+      action: apt pkg={{item}} state=installed
+      with_items:
+        - postgresql-server-dev-9.3
+
+    - name: Adding Vagrant user to postgres user
+      action: sudo -u postgres createuser vagrant

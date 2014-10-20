@@ -1,28 +1,12 @@
 ---
-
-# Configuration directives for Travis CI
-# --------------------------------------
-
-# See the Travis documentation for help on writing this file.
-
-# [Travis CI] http://travis-ci.org
-# [configuration] http://about.travis-ci.org/docs/user/build-configuration/
-
-
-language: python  # Needed to run ansible
-
-python:
-  - "2.7"
-
+language: python
+python: "2.7"
+before_install:
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq python-apt python-pycurl
 install:
-  - pip install ansible
-
+  - pip install ansible==1.5.0
 script:
-  # Syntax check every ansible playbook in root
-  # Don't check main, though, as vars_prompt still
-  # trigger during syntax checks, and travis fails
-  - find . -maxdepth 1 -type f -name '*.yml' -not -name '.*' -not -name 'main.yml' | xargs -t -n1 ansible-playbook --syntax-check -i inventory
-
-notifications:
-  email:
-    - zenoamaro@gmail.com
+  - echo localhost > inventory
+  - ansible-playbook --syntax-check -i inventory test.yml
+  - ansible-playbook -i inventory test.yml --connection=local --sudo

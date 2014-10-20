@@ -1,8 +1,6 @@
----
-- name: restart postgresql
-  sudo: yes
-  service: name=postgresql state=restarted
+# file: postgresql/handlers/main.yml
 
-- name: reload postgresql
-  sudo: yes
-  service: name=postgresql state=reloaded
+- name: restart postgresql
+  service:
+    name: postgresql
+    state: restarted

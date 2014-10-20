@@ -1,116 +1,73 @@
----
+# file: postgresql/defaults/main.yml
 
-# Only `9.3` is supported as of now
+# Basic settings
 postgresql_version: 9.3
+postgresql_encoding: 'UTF-8'
+postgresql_locale: 'en_US.UTF-8'
 
-# This will be the main admin user, which is only allowed to connect
-# from localhost, mainly for provisioning, maintenance and scripts.
-postgresql_admin_user: postgres
-postgresql_admin_group: "{{postgresql_admin_user}}"
+postgresql_admin_user: "postgres"
+postgresql_default_auth_method: "trust"
 
-# TODO: This has been modeled but there's no real support for clusters yet
-postgresql_cluster: main
+postgresql_cluster_name: "main"
+postgresql_cluster_reset: false
+
+# Extensions
+postgresql_ext_install_contrib: no
+postgresql_ext_install_dev_headers: no
+postgresql_ext_install_postgis: no
+
+postgresql_ext_postgis_version: "2.1" # be careful: check whether the postgresql/postgis versions work together
+
+# List of databases to be created (optional)
+postgresql_databases: []
+
+# List of users to be created (optional)
+postgresql_users: []
+
+# List of user privileges to be applied (optional)
+postgresql_user_privileges: []
+
+# pg_hba.conf
+postgresql_pg_hba_default:
+  - { type: local, database: all, user: '{{ postgresql_admin_user }}', address: '', method: '{{ postgresql_default_auth_method }}', comment: '' }
+  - { type: local, database: all, user: all, address: '',             method: '{{ postgresql_default_auth_method }}', comment: '"local" is for Unix domain socket connections only' }
+  - { type: host,  database: all, user: all, address: '127.0.0.1/32', method: '{{ postgresql_default_auth_method }}', comment: 'IPv4 local connections:' }
+  - { type: host,  database: all, user: all, address: '::1/128',      method: '{{ postgresql_default_auth_method }}', comment: 'IPv6 local connections:' }
+
+postgresql_pg_hba_passwd_hosts: []
+postgresql_pg_hba_trust_hosts: []
+postgresql_pg_hba_custom: []
 
 
-# File locations
-# --------------
+# postgresql.conf
 
+#------------------------------------------------------------------------------
+# FILE LOCATIONS
+#------------------------------------------------------------------------------
 
-# Store postgres' configuration files here
-postgresql_conf_directory: "/etc/postgresql/{{postgresql_version}}/{{postgresql_cluster}}"
-# Host-based authentication file
+# Location of postgres configuration files here
+postgresql_conf_directory: "/etc/postgresql/{{postgresql_version}}/{{postgresql_cluster_name}}"
+# HBA (Host Based Authentication) file
 postgresql_hba_file: "{{postgresql_conf_directory}}/pg_hba.conf"
 # Ident configuration file
 postgresql_ident_file: "{{postgresql_conf_directory}}/pg_ident.conf"
 # Use data in another directory
-postgresql_data_directory: "/var/lib/postgresql/{{postgresql_version}}/{{postgresql_cluster}}"
-# Directory to store runtime data such as PIDs
-postgresql_runtime_directory: "/var/run/postgresql"
+postgresql_data_directory: "/var/lib/postgresql/{{postgresql_version}}/{{postgresql_cluster_name}}"
 # If external_pid_file is not explicitly set, on extra PID file is written
-postgresql_external_pid_file: "{{postgresql_runtime_directory}}/{{postgresql_version}}-{{postgresql_cluster}}.pid"
-# Store postgresql's logs files here
-postgresql_log_directory: "/var/log/postgresql"
+postgresql_external_pid_file: "/var/run/postgresql/{{postgresql_version}}-{{postgresql_cluster_name}}.pid"
 
+#------------------------------------------------------------------------------
+# CONNECTIONS AND AUTHENTICATION
+#------------------------------------------------------------------------------
 
-# Connections and authentication
-# ------------------------------
-
-# Use 'localhost' for local addresses only. Use '*' alone to
-# listen on every available address.
 postgresql_listen_addresses:
   - localhost
 postgresql_port: 5432
 
-# Authenticated connections that will be inserted in `pg_hba.conf`.
-# These won't overwrite the default local idents, which are left
-# untouched as they are useful and safe.
-#
-# Specify connections as a list of hashes having this schema:
-#   - type: local
-#     user: postgres
-#     method: peer
-#     database: 'all'             # defaults to 'samerole', can also be a list
-#     address: '192.168.0.0/24'   # optional
-#     options:                    # optional
-#       key: value
-#
-# The first field is the connection type: "local" is a Unix-domain
-# socket, "host" is either a plain or SSL-encrypted TCP/IP socket,
-# "hostssl" is an SSL-encrypted TCP/IP socket, and "hostnossl" is a
-# plain TCP/IP socket.
-#
-# DATABASE can be "all", "sameuser", "samerole", "replication", a
-# database name, or a comma-separated list thereof. The "all"
-# keyword does not match "replication". Access to replication
-# must be enabled in a separate record (see example below).
-#
-# USER can be "all", a user name, a group name prefixed with "+", or a
-# comma-separated list thereof.  In both the DATABASE and USER fields
-# you can also write a file name prefixed with "@" to include names
-# from a separate file.
-#
-# ADDRESS specifies the set of hosts the record matches.  It can be a
-# host name, or it is made up of an IP address and a CIDR mask that is
-# an integer (between 0 and 32 (IPv4) or 128 (IPv6) inclusive) that
-# specifies the number of significant bits in the mask.  A host name
-# that starts with a dot (.) matches a suffix of the actual host name.
-# Alternatively, you can write an IP address and netmask in separate
-# columns to specify the set of hosts.  Instead of a CIDR-address, you
-# can write "samehost" to match any of the server's own IP addresses,
-# or "samenet" to match any address in any subnet that the server is
-# directly connected to.
-#
-# METHOD can be "trust", "reject", "md5", "password", "gss", "sspi",
-# "krb5", "ident", "peer", "pam", "ldap", "radius" or "cert".  Note that
-# "password" sends passwords in clear text; "md5" is preferred since
-# it sends encrypted passwords.
-#
-# Database and user names containing spaces, commas, quotes and other
-# special characters must be quoted.  Quoting one of the keywords
-# "all", "sameuser", "samerole" or "replication" makes the name lose
-# its special character, and just match a database or username with
-# that name.
-postgresql_authentication: []
-
-# Authenticated connections that will be inserted in `pg_hba.conf`.
-# These won't overwrite the default local idents, which are left
-# untouched as they are useful and safe.
-# Specify connections as a list of hashes having this schema:
-#   - name: map_a
-#     user: system_user
-#     pg_user: postgresql_user
-postgresql_user_map: []
-
-# A dict whose `key: value`s will be provided as environment
-# variables for the postmaster.
-postgresql_env: {}
-
-# Note:  Increasing max_connections costs ~400 bytes of shared memory per
-# connection slot, plus lock space (see max_locks_per_transaction).
-postgresql_max_connections: 1024
+postgresql_max_connections: 100
 postgresql_superuser_reserved_connections: 3
 
-postgresql_unix_socket_directories: # comma-separated list of directories
+postgresql_unix_socket_directories:
   - /var/run/postgresql
 postgresql_unix_socket_group: ''
 postgresql_unix_socket_permissions: '0777' # begin with 0 to use octal notation
@@ -123,8 +80,7 @@ postgresql_bonjour: off # advertise server via Bonjour
 postgresql_bonjour_name: '' # defaults to the computer name
 
 
-# Security and Authentication
-# ---------------------------
+# - Security and Authentication -
 
 postgresql_authentication_timeout: 60s
 postgresql_ssl: off
@@ -147,20 +103,20 @@ postgresql_krb_server_keyfile: ''
 postgresql_krb_srvname: postgres
 postgresql_krb_caseins_users: off
 
-# TCP Keepalives, 0 selects the system default
+# TCP Keepalives, 0 selects the system default (in seconds)
 postgresql_tcp_keepalives_idle: 0
 postgresql_tcp_keepalives_interval: 0
 postgresql_tcp_keepalives_count: 0
 
 
-# Memory
-# ------
+#------------------------------------------------------------------------------
+# RESOURCE USAGE (except WAL)
+#------------------------------------------------------------------------------
+
+# - Memory -
 
 postgresql_shared_buffers:       128MB # min 128kB
 postgresql_temp_buffers:         8MB   # min 800kB
-postgresql_work_mem:             1MB   # min 64kB
-postgresql_maintenance_work_mem: 16MB  # min 1MB
-postgresql_max_stack_depth:      2MB   # min 100kB
 
 # Note:  Increasing max_prepared_transactions costs ~600 bytes of shared memory
 # per transaction slot, plus lock space (see max_locks_per_transaction).
@@ -168,33 +124,49 @@ postgresql_max_stack_depth:      2MB   # min 100kB
 # actively intend to use prepared transactions.
 postgresql_max_prepared_transactions: 0 # zero disables the feature
 
-# Disk
-# ----
+postgresql_work_mem:             1MB   # min 64kB
+postgresql_maintenance_work_mem: 16MB  # min 1MB
+postgresql_max_stack_depth:      2MB   # min 100kB
 
-# limits per-session temp file space in kB, or -1 for off limit
+
+# - Disk -
+
+# limits per-session temp file space in kB, or -1 for no limit
 postgresql_temp_file_limit: -1
 
-# Kernel Resource Usage
-# ---------------------
+
+# - Kernel Resource Usage -
 
 postgresql_max_files_per_process: 1000  # min 25
 postgresql_shared_preload_libraries: []
 
 
-# Lock Management
-# ---------------
+# - Cost-Based Vacuum Delay -
 
-postgresql_deadlock_timeout: 1s
-postgresql_max_locks_per_transaction: 64         # min 10
-
-# Note:  Each lock table slot uses ~270 bytes of shared memory, and there are
-# max_locks_per_transaction * (max_connections + max_prepared_transactions)
-# lock table slots.
-postgresql_max_pred_locks_per_transaction: 64    # min 10
+postgresql_vacuum_cost_delay:      0       # 0-100 milliseconds
+postgresql_vacuum_cost_page_hit:   1       # 0-10000 credits
+postgresql_vacuum_cost_page_miss:  10      # 0-10000 credits
+postgresql_vacuum_cost_page_dirty: 20      # 0-10000 credits
+postgresql_vacuum_cost_limit:      200     # 1-10000 credits
 
 
-# Write Ahead Log
-# ---------------
+# - Background Writer -
+
+postgresql_bgwriter_delay:          200ms  # 10-10000ms between rounds
+postgresql_bgwriter_lru_maxpages:   100    # 0-1000 max buffers written/round
+postgresql_bgwriter_lru_multiplier: 2.0    # 0-10.0 multipler on buffers scanned/round
+
+
+# - Asynchronous Behavior -
+
+postgresql_effective_io_concurrency: 1     # 1-1000; 0 disables prefetching
+
+
+#------------------------------------------------------------------------------
+# WRITE AHEAD LOG
+#------------------------------------------------------------------------------
+
+# - Settings -
 
 postgresql_wal_level: minimal  # minimal, archive, or hot_standby
 postgresql_fsync: on  # turns forced synchronization on or off
@@ -222,10 +194,16 @@ postgresql_wal_writer_delay: 200ms  # 1-10000 milliseconds
 postgresql_commit_delay:     0      # range 0-100000, in microseconds
 postgresql_commit_siblings:  5      # range 1-1000
 
+
+# - Checkpoints -
+
 postgresql_checkpoint_segments:          3     # in logfile segments, min 1, 16MB each
 postgresql_checkpoint_timeout:           5min  # range 30s-1h
 postgresql_checkpoint_completion_target: 0.5   # checkpoint target duration, 0.0 - 1.0
 postgresql_checkpoint_warning:           30s   # 0 disables
+
+
+# - Archiving -
 
 # allows archiving to be done
 postgresql_archive_mode: off
@@ -240,8 +218,11 @@ postgresql_archive_command: ''
 postgresql_archive_timeout: 0
 
 
-# Replication
-# -----------
+#------------------------------------------------------------------------------
+# REPLICATION
+#------------------------------------------------------------------------------
+
+# - Sending Server(s) -
 
 # Set these on the master and on any standby that will send replication data.
 
@@ -251,8 +232,8 @@ postgresql_max_wal_senders: 0
 postgresql_wal_keep_segments:  0    # in logfile segments, 16MB each; 0 disables
 postgresql_wal_sender_timeout: 60s  # in milliseconds; 0 disables
 
-# Replication (masters)
-# ---------------------
+
+# - Master Server -
 
 # These settings are ignored on a standby server.
 
@@ -262,6 +243,9 @@ postgresql_synchronous_standby_names: [] # '*' means 'all'
 
 # number of xacts by which cleanup is delayed
 postgresql_vacuum_defer_cleanup_age: 0
+
+
+# - Standby Servers -
 
 # "on" allows queries during recovery
 postgresql_hot_standby: off
@@ -277,8 +261,60 @@ postgresql_hot_standby_feedback: off
 postgresql_wal_receiver_timeout: 60s
 
 
-# Error Reporting And Logging
-# ---------------------------
+#------------------------------------------------------------------------------
+# QUERY TUNING
+#------------------------------------------------------------------------------
+
+# - Planner Method Configuration -
+
+postgresql_enable_bitmapscan:         on
+postgresql_enable_hashagg:            on
+postgresql_enable_hashjoin:           on
+postgresql_enable_indexscan:          on
+postgresql_enable_indexonlyscan:      on
+postgresql_enable_material:           on
+postgresql_enable_mergejoin:          on
+postgresql_enable_nestloop:           on
+postgresql_enable_seqscan:            on
+postgresql_enable_sort:               on
+postgresql_enable_tidscan:            on
+
+
+# - Planner Cost Constants -
+
+postgresql_seq_page_cost:             1.0     # measured on an arbitrary scale
+postgresql_random_page_cost:          4.0     # same scale as above
+postgresql_cpu_tuple_cost:            0.01    # same scale as above
+postgresql_cpu_index_tuple_cost:      0.005   # same scale as above
+postgresql_cpu_operator_cost:         0.0025  # same scale as above
+postgresql_effective_cache_size:      128MB
+
+
+# - Genetic Query Optimizer -
+
+postgresql_geqo:                      on
+postgresql_geqo_threshold:            12
+postgresql_geqo_effort:               5    # range 1-10
+postgresql_geqo_pool_size:            0    # selects default based on effort
+postgresql_geqo_generations:          0    # selects default based on effort
+postgresql_geqo_selection_bias:       2.0  # range 1.5-2.0
+postgresql_geqo_seed:                 0.0  # range 0.0-1.0
+
+
+# - Other Planner Options -
+
+postgresql_default_statistics_target: 100        # range 1-10000
+postgresql_constraint_exclusion:      partition  # on, off, or partition
+postgresql_cursor_tuple_fraction:     0.1        # range 0.0-1.0
+postgresql_from_collapse_limit:       8
+postgresql_join_collapse_limit:       8          # 1 disables collapsing of explicit
+
+
+#------------------------------------------------------------------------------
+# ERROR REPORTING AND LOGGING
+#------------------------------------------------------------------------------
+
+# - Where to Log -
 
 # Valid values are combinations of stderr, csvlog, syslog, and eventlog.
 # depending on platform. Csvlog requires logging_collector to be on.
@@ -286,10 +322,12 @@ postgresql_log_destination: stderr
 
 # Enable capturing of stderr and csvlog into log files.
 # Required to be on for csvlogs.
-postgresql_logging_collector: on
+postgresql_logging_collector: off
 
 # These are only used if logging_collector is on:
 
+# Directory where log files are written, can be absolute or relative to PGDATA
+postgresql_log_directory: pg_log
 # Log file name pattern, can include strftime() escapes
 postgresql_log_filename: postgresql-%Y-%m-%d_%H%M%S.log
 postgresql_log_file_mode: '0600' # begin with 0 to use octal notation
@@ -308,6 +346,9 @@ postgresql_syslog_facility: LOCAL0
 postgresql_syslog_ident: postgres
 # This is only relevant when logging to eventlog (win32):
 postgresql_event_source: PostgreSQL
+
+
+# - When to Log -
 
 # Values in order of decreasing detail:
 # - debug5
@@ -355,6 +396,9 @@ postgresql_log_min_error_statement: error
 # statements running at least this number of milliseconds
 postgresql_log_min_duration_statement: -1
 
+
+# - What to Log -
+
 postgresql_debug_print_parse:     off
 postgresql_debug_print_rewritten: off
 postgresql_debug_print_plan:      off
@@ -395,16 +439,22 @@ postgresql_log_temp_files: -1
 postgresql_log_timezone:   UTC
 
 
-# Runtime statistics
-# ------------------
+#------------------------------------------------------------------------------
+# RUNTIME STATISTICS
+#------------------------------------------------------------------------------
 
-postgresql_track_activities:  on
-postgresql_track_counts:      on
-postgresql_track_io_timing:   off
-postgresql_track_functions:   none # none, pl, all
+# - Query/Index Statistics Collector -
+
+postgresql_track_activities:          on
+postgresql_track_counts:              on
+postgresql_track_io_timing:           off
+postgresql_track_functions:           none # none, pl, all
 postgresql_track_activity_query_size: 1024
-postgresql_update_process_title: on
-postgresql_stats_temp_directory: pg_stat_tmp
+postgresql_update_process_title:      on
+postgresql_stats_temp_directory:      pg_stat_tmp
+
+
+# - Statistics Monitoring -
 
 postgresql_log_parser_stats:    off
 postgresql_log_planner_stats:   off
@@ -412,70 +462,9 @@ postgresql_log_executor_stats:  off
 postgresql_log_statement_stats: off
 
 
-# Error Handling
-# --------------
-
-# Terminate session on any error?
-postgresql_exit_on_error: off
-# Reinitialize after backend crash?
-postgresql_restart_after_crash: on
-
-
-# Query Tuning (Planner)
-# ----------------------
-
-postgresql_enable_bitmapscan:    on
-postgresql_enable_hashagg:       on
-postgresql_enable_hashjoin:      on
-postgresql_enable_indexscan:     on
-postgresql_enable_indexonlyscan: on
-postgresql_enable_material:      on
-postgresql_enable_mergejoin:     on
-postgresql_enable_nestloop:      on
-postgresql_enable_seqscan:       on
-postgresql_enable_sort:          on
-postgresql_enable_tidscan:       on
-
-postgresql_seq_page_cost:        1.0     # measured on an arbitrary scale
-postgresql_random_page_cost:     4.0     # same scale as above
-postgresql_cpu_tuple_cost:       0.01    # same scale as above
-postgresql_cpu_index_tuple_cost: 0.005   # same scale as above
-postgresql_cpu_operator_cost:    0.0025  # same scale as above
-postgresql_effective_cache_size: 128MB
-
-# Query Tuning (Genetic Query Optimizer)
-# --------------------------------------
-
-postgresql_geqo:                on
-postgresql_geqo_threshold:      12
-postgresql_geqo_effort:         5    # range 1-10
-postgresql_geqo_pool_size:      0    # selects default based on effort
-postgresql_geqo_generations:    0    # selects default based on effort
-postgresql_geqo_selection_bias: 2.0  # range 1.5-2.0
-postgresql_geqo_seed:           0.0  # range 0.0-1.0
-
-# Query Tuning (Other Planner Options)
-# ------------------------------------
-
-postgresql_default_statistics_target: 100        # range 1-10000
-postgresql_constraint_exclusion:      partition  # on, off, or partition
-postgresql_cursor_tuple_fraction:     0.1        # range 0.0-1.0
-postgresql_from_collapse_limit:       8
-postgresql_join_collapse_limit:       8          # 1 disables collapsing of explicit
-
-
-# Cost-Based Vacuum Delay
-# -----------------------
-
-postgresql_vacuum_cost_delay:      0    # 0-100 milliseconds
-postgresql_vacuum_cost_page_hit:   1    # 0-10000 credits
-postgresql_vacuum_cost_page_miss:  10   # 0-10000 credits
-postgresql_vacuum_cost_page_dirty: 20   # 0-10000 credits
-postgresql_vacuum_cost_limit:      200  # 1-10000 credits
-
-
-# Autovacuum Parameters
-# ---------------------
+#------------------------------------------------------------------------------
+# AUTOVACUUM PARAMETERS
+#------------------------------------------------------------------------------
 
 # Enable autovacuum subprocess? 'on' requires track_counts to also be on.
 postgresql_autovacuum: on
@@ -502,22 +491,11 @@ postgresql_autovacuum_vacuum_cost_delay: 20ms
 postgresql_autovacuum_vacuum_cost_limit: -1
 
 
-# Background Writer
-# -----------------
+#------------------------------------------------------------------------------
+# CLIENT CONNECTION DEFAULTS
+#------------------------------------------------------------------------------
 
-postgresql_bgwriter_delay:          200ms  # 10-10000ms between rounds
-postgresql_bgwriter_lru_maxpages:   100    # 0-1000 max buffers written/round
-postgresql_bgwriter_lru_multiplier: 2.0    # 0-10.0 multipler on buffers scanned/round
-
-
-# Asynchronous Behavior
-# ---------------------
-
-postgresql_effective_io_concurrency: 1  # 1-1000; 0 disables prefetching
-
-
-# Client Connection Defaults
-# --------------------------
+# - Statement Behavior -
 
 postgresql_search_path: # schema names
   - '"$user"'
@@ -540,6 +518,15 @@ postgresql_bytea_output: hex  # hex, escape
 postgresql_xmlbinary:    base64
 postgresql_xmloption:    content
 
+
+# - Locale and Formatting -
+
+postgresql_datestyle:
+  - iso
+  - mdy
+postgresql_intervalstyle:      postgres
+postgresql_timezone:           UTC
+
 # Select the set of available time zone abbreviations. Currently, there are:
 #   Default
 #   Australia
@@ -547,11 +534,6 @@ postgresql_xmloption:    content
 # You can create your own file in `share/timezonesets/`.
 postgresql_timezone_abbreviations: Default
 
-postgresql_datestyle:
-  - iso
-  - mdy
-postgresql_intervalstyle:      postgres
-postgresql_timezone:           UTC
 postgresql_extra_float_digits: 0          # min -15, max 3
 postgresql_client_encoding:    sql_ascii  # 'sql_ascii' actually defaults to database encoding
 
@@ -572,8 +554,24 @@ postgresql_dynamic_library_path: '$libdir'
 postgresql_local_preload_libraries: []
 
 
-# Version/platform Compatibility
-# ------------------------------
+#------------------------------------------------------------------------------
+# LOCK MANAGEMENT
+#------------------------------------------------------------------------------
+
+postgresql_deadlock_timeout: 1s
+postgresql_max_locks_per_transaction: 64         # min 10
+
+# Note:  Each lock table slot uses ~270 bytes of shared memory, and there are
+# max_locks_per_transaction * (max_connections + max_prepared_transactions)
+# lock table slots.
+postgresql_max_pred_locks_per_transaction: 64    # min 10
+
+
+#------------------------------------------------------------------------------
+# VERSION/PLATFORM COMPATIBILITY
+#------------------------------------------------------------------------------
+
+# - Previous PostgreSQL Versions -
 
 postgresql_array_nulls:                 on
 postgresql_backslash_quote:             safe_encoding # on, off, or safe_encoding
@@ -584,25 +582,25 @@ postgresql_quote_all_identifiers:       off
 postgresql_sql_inheritance:             on
 postgresql_standard_conforming_strings: on
 postgresql_synchronize_seqscans:        on
+
+
+# - Other Platforms and Clients -
+
 postgresql_transform_null_equals:       off
 
 
-# Extensions
-# ----------
+#------------------------------------------------------------------------------
+# ERROR HANDLING
+#------------------------------------------------------------------------------
 
-# If enabled, this will install the contrib packages.
-
-postgresql_contrib: no
-
-
-# If enabled, will install the [PostGIS] extension
-# from the repositories, at the indicated version.
-# [PostGIS] http://postgis.net/
-
-postgresql_postgis: no
-postgresql_postgis_version: '2.1'
+# Terminate session on any error?
+postgresql_exit_on_error: off
+# Reinitialize after backend crash?
+postgresql_restart_after_crash: on
 
 
-# If enabled, this will install the development headers.
 
-postgresql_dev_headers: no
+
+postgresql_env:
+  LC_ALL: "{{ postgresql_locale }}"
+  LC_LCTYPE: "{{ postgresql_locale }}"
