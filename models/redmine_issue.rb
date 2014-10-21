@@ -1,32 +1,34 @@
 class RedmineIssue
+
+  attr_accessor :issue
+
   def initialize(data)
     @raw_data = data["payload"]
-    @issue = @raw_data["issue"]
+    @issue = api["issue"]
   end
 
   def id
-    @id ||= @issue["id"]
+    @id ||= @raw_data["issue"]["id"]
+  end
+
+  def api
+    @api ||= HTTParty.get("http://dev.vodeclic.com/issues/#{id}.json?key=73f69296fb4828263a60226517dea6b001b6aa36&include=attachments,journals")
   end
 
   def title
-    @title ||= @issue["subject"]
+    @title ||= issue["subject"]
   end
 
   def description
-    @description ||= @issue["description"]
+    @description ||= issue["description"]
   end
 
   def status
-    @status ||= @issue["status"]["id"]
+    @status ||= issue["status"]["id"]
   end
 
   def author
-    @author ||= @issue["author"]["firstname"] + " " + @issue["author"]["firstname"]
-  end
-
-  ## Call redmine API to get more info on the hook triggered
-  def api
-    @api ||= HTTParty.get("http://dev.vodeclic.com/issues/#{id}.json?key=73f69296fb4828263a60226517dea6b001b6aa36&include=attachments,journals")
+    @author ||= issue["author"]["name"]
   end
 
   def attachments
@@ -34,10 +36,16 @@ class RedmineIssue
   end
 
   def comments
-    @comments || get_comments
+    @comments ||= get_comments
   end
 
-  #########
+  def priority
+    @priority ||= @@mapping.priority[api["issue"]["priority"]["id"].to_i] rescue nil
+  end
+
+  def assignee
+    @assignee ||= @@mapping.assignee[api["issue"]["assigned_to"]["id"].to_i] rescue nil
+  end
 
   def formated_description
     data = String.new
@@ -58,39 +66,26 @@ class RedmineIssue
 Attachment: #{attachment})"
     }
 
-    comments.each_with_index{|comment, i|
-       data += "
+    data += "
 \n
 --
-#### Comment #{i+1}
-**Author**: #{comment[:author]}
-**Date**: #{comment[:date].to_date}
+#### Comments" if comments.present?
 
-#{comment[:comment]}\n\n"
+    comments.each_with_index{|comment, i|
+       data += "\n *#{comment[:author]} - #{comment[:date].to_date}*
+#{comment[:comment]}\n\n--"
     }
 
-    data += "\n\n--\n*Comment issue here: http://dev.vodeclic.com/issues/#{id}*"
+    data += "\n\n*Comment issue here: http://dev.vodeclic.com/issues/#{id}*"
 
     return(data)
   end
 
-  def validated?
-    status == 14 || closed?
-  end
-
-  def closed?
-    status == 5
-  end
-
-  def opened?
-    status != 5
+  def open?
+    status == @@mapping.status.key("open")
   end
 
   private
-  def url_for_attachment(attachment)
-    "http://dev.vodeclic.com/attachments/#{attachment["prop_key"]}.json?key=73f69296fb4828263a60226517dea6b001b6aa36"
-  end
-
   def get_attachments
     api["issue"]["attachments"].map{|attachment|
       attachment["content_url"]

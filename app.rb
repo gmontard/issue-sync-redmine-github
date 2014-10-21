@@ -4,30 +4,32 @@ require "redcarpet"
 require 'pry'
 require 'sinatra/activerecord'
 require './config/environments'
+require './config/mapping'
 require './models/redmine_issue'
 require './models/github_issue'
 require './models/issue'
 
+@@mapping = Mapping.new
+
 get '/' do
 	content_type :json
-	Issue.all.to_json
+	Issue.order("ID DESC").all.to_json
 end
 
 post '/redmine_hook' do
 	data = JSON.parse request.body.read
 	redmine = RedmineIssue.new(data)
 
-	## Is issue with status "validated" on Redmine?
-	if redmine.validated?
-		issue = Issue.find_or_create_by_redmine_id(redmine.id)
+	issue = Issue.where(redmine_id: redmine.id).first
 
-		### is issue already present on Github?
-		if issue.github_id.present?
-			res = issue.update_on_github(redmine)
-		else
-			res = issue.create_on_github(redmine)
-			issue.github_id = res.body["id"]
-			issue.save
+	if issue.present?
+		## Update on Github if exist
+		issue.update_on_github(redmine)
+	else
+		## Only create Issue on Github when status is validated
+		if redmine.open?
+			issue = Issue.create(redmine_id: redmine.id)
+			issue.create_on_github(redmine)
 		end
 	end
 
@@ -38,11 +40,11 @@ post '/github_hook' do
 	data = JSON.parse(request.body.read)
 	github = GithubIssue.new(data)
 
-	issue = Issue.where(github_id: github.id)
+	issue = Issue.where(github_id: github.id).first
 
-	## Issue already created on Redmine and has status closed on Github
-	if issue.present? && github.status = "closed"
-		issue.close_on_redmine
+	## Issue already created on Redmine
+	if issue.present?
+		issue.update_on_redmine(github)
 	end
 
 	"OK"
