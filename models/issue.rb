@@ -4,19 +4,19 @@ class Issue < ActiveRecord::Base
 
   def update_on_redmine(github)
     options = redmine_options(github)
-    HTTParty.put("http://dev.vodeclic.com/issues/#{self.redmine_id}.json?key=73f69296fb4828263a60226517dea6b001b6aa36", options)
+    HTTParty.put("#{ENV['REDMINE_URL']}/issues/#{self.redmine_id}.json?key=#{ENV['REDMINE_API_KEY']}", options)
   end
 
   def create_on_github(redmine)
     options = github_options(redmine)
-    res = HTTParty.post("https://api.github.com/repos/Vodeclic/Vodeclic/issues", options)
+    res = HTTParty.post("https://api.github.com/repos/#{ENV['GITHUB_REPO']}/issues", options)
     self.github_id = res["number"]
     self.save
   end
 
   def update_on_github(redmine)
     options = github_options(redmine)
-    HTTParty.patch("https://api.github.com/repos/Vodeclic/Vodeclic/issues/#{github_id}", options)
+    HTTParty.patch("https://api.github.com/repos/#{ENV['GITHUB_REPO']}/issues/#{github_id}", options)
   end
 
   private
@@ -36,10 +36,10 @@ class Issue < ActiveRecord::Base
     {
       headers: {
         "Accept" => "application/vnd.github.v3+json",
-        "User-Agent" => "gmontard"
+        "User-Agent" => ENV['GITHUB_OWNER']
       },
       basic_auth: {
-        username: "7e0dbe637070b63bed187a2f48f95b9ddcc9c913",
+        username: ENV['GITHUB_API_KEY'],
         password: "x-oauth-basic"
       }
     }

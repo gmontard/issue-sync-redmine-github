@@ -11,6 +11,7 @@ gem "redcarpet"
 group :development do
   gem "pry"
   gem "racksh"
+  gem "dotenv"
 end
 
 ruby "2.1.2"

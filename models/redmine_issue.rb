@@ -12,7 +12,7 @@ class RedmineIssue
   end
 
   def api
-    @api ||= HTTParty.get("http://dev.vodeclic.com/issues/#{id}.json?key=73f69296fb4828263a60226517dea6b001b6aa36&include=attachments,journals")
+    @api ||= HTTParty.get("#{ENV['REDMINE_URL']}/issues/#{id}.json?key=#{ENV['REDMINE_API_KEY']}&include=attachments,journals")
   end
 
   def title
@@ -53,7 +53,7 @@ class RedmineIssue
     data += "*This issue was generated automatically from Redmine*
 
 **Author**: #{author}
-**Issue URL**: http://dev.vodeclic.com/issues/#{id}
+**Issue URL**: http://#{ENV['REDMINE_URL']}/issues/#{id}
 
 --
 #### Description
@@ -76,7 +76,7 @@ Attachment: #{attachment})"
 #{comment[:comment]}\n\n--"
     }
 
-    data += "\n\n*Comment issue here: http://dev.vodeclic.com/issues/#{id}*"
+    data += "\n\n*Comment issue here: #{ENV['REDMINE_URL']}/issues/#{id}*"
 
     return(data)
   end

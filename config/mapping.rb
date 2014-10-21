@@ -5,10 +5,6 @@ class Mapping
   def initialize
   end
 
-  #####
-  # key is alway the redmine ID, value is the Github corresponding data
-  ####
-
   def priority
     {
       3 => "Low",
