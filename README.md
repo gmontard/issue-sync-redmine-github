@@ -77,17 +77,18 @@ end
 ~~~
 
 - You need to setup those environments variables in order for the App to work:
-  - DATABASE_URL => Database URL (ex: postgres://localhost/bugsync_development)
-  - DATABASE_NAME => Database name
-  - DATABASE_USERNAME => Database username (ex: postgres)
-  - DATABASE_PASSWORD => Database password
-  - DATABASE_HOST => Database host (ex: localhost)
-  - REDMINE_URL => Your Redmine Public base URL
-  - REDMINE_API_KEY => Your Redmine API Key is available on your account page (*/my/account*)
-  - GITHUB_API_KEY => Your Github access token
-  - GITHUB_OWNER => Your Github Username
-  - GITHUB_REPO => Your Github project Repo (for ex: *gmontard/issue-sync-redmine-github*)
-
+~~~console
+DATABASE_URL  # Database URL (ex: postgres://localhost/bugsync_development)
+DATABASE_NAME  # Database name
+DATABASE_USERNAME  # Database username (ex: postgres)
+DATABASE_PASSWORD  # Database password
+DATABASE_HOST  # Database host (ex: localhost)
+REDMINE_URL  # Your Redmine Public base URL
+REDMINE_API_KEY  # Your Redmine API Key is available on your account page (*/my/account*)
+GITHUB_API_KEY  # Your Github access token
+GITHUB_OWNER  # Your Github Username
+GITHUB_REPO  # Your Github project Repo (for ex: *gmontard/issue-sync-redmine-github*)
+~~~
 
 - In development you can create a *.env* file an set those variables
 
