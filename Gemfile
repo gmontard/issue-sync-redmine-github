@@ -6,10 +6,10 @@ gem "sinatra-activerecord", "~> 2.0.2"
 gem "rake", "~> 10.3.2"
 gem "pg", "~> 0.17.1"
 gem "httparty", "~> 0.13.1"
+gem "racksh"
 
 group :development do
   gem "pry"
-  gem "racksh"
   gem "dotenv"
 end
 
