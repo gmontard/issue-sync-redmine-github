@@ -2,10 +2,7 @@ class Mapping
 
   attr_reader :priority, :assignee, :status
 
-  def initiliaze
-    @priority = priority
-    @assignee = assignee
-    @status = status
+  def initialize
   end
 
   #####
