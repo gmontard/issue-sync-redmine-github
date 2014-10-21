@@ -28,12 +28,14 @@ If you'd like to change those behaviors it should be pretty straightford to do s
 
 #### On Redmine
 
-- You need a Redmine install >= 2.4, [REST Api](http://www.redmine.org/projects/redmine/wiki/Rest_api) enabled and the [Redmine Webhook](https://github.com/suer/redmine_webhook) plugin
-- Configure the Redmine Webhook URL to point to this App install: http://your-app-install/redmine_hebook
+- You need a Redmine install >= 2.4, [REST Api](http://www.redmine.org/projects/redmine/wiki/Rest_api) enabled and the [Redmine Webhook](https://github.com/suer/redmine_webhook) plugin.
+- Configure the Redmine Webhook URL to point to this App install (**http://your-app-install/redmine_hebook**)
 
 #### On Github
 
 - Create a [Github personnal access token](https://github.com/settings/tokens/new) with right on *Repo*
+- Configure a Webhook URL for your Github repo to point to this App install (http://your-app-install/github_hebook)
+- Go to your repository setting (https://github.com/username/repo/settings/hooks), click on "Add webhook", in the *Payload URL* field use this App URL (**http://your-app-install/github_hebook**), check event *Issues* and activate it.
 
 #### Configure the Application
 
@@ -132,6 +134,46 @@ Also a console is available:
 racksh
 ~~~
 
+
+### Deploy in production
+
+- Login through Heroku and create your heroku App:
+~~~console
+heroku login
+heroku create
+~~~
+
+- Add Postgresql Add-on
+~~~console
+heroku addons:add heroku-postgresql
+~~~
+
+- Retrieve the Postgresql Credentails
+~~~console
+heroku config
+#ex: postgres://gvupfefeizddbfk:zURnLz87hjhfegsLjpl-DZ@ec2-5455-24-51-1.compute-1.amazonaws.com:5432/jfkej87jhfp9
+~~~
+
+- Set the environments variables on Heroku:
+~~~console
+heroku config:set DATABASE_URL=postgres://gvupfefeizddbfk:zURnLz87hjhfegsLjpl-DZ@ec2-5455-24-51-1.compute-1.amazonaws.com:5432/jfkej87jhfp9
+heroku config:set DATABASE_NAME=jfkej87jhfp9
+heroku config:set DATABASE_USERNAME=gvupfefeizddbfk
+heroku config:set DATABASE_PASSWORD=zURnLz87hjhfegsLjpl-DZ-bD
+heroku config:set DATABASE_HOST=ec2-5455-24-51-1.compute-1.amazonaws.com
+heroku config:set REDMINE_URL=
+heroku config:set REDMINE_API_KEY=
+heroku config:set GITHUB_OWNER=
+heroku config:set GITHUB_REPO=
+heroku config:set GITHUB_API_KEY=
+~~~
+
+- Deploy in production and run migration
+~~~console
+git push heroku master && heroku run rake db:migrate
+~~~
+
+*Do not forget to configure Webhook URL on Redmine and Github according to *Requirements* section above.*
 
 ### Technology
 
