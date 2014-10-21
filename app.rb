@@ -1,7 +1,6 @@
 require 'sinatra'
 require 'httparty'
-require "redcarpet"
-require 'pry'
+require 'pry' if development?
 require 'sinatra/activerecord'
 require './config/environments'
 require './config/mapping'
