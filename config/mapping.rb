@@ -7,26 +7,23 @@ class Mapping
 
   def priority
     {
-      3 => "Low",
-      4 => "Normal",
-      5 => "High",
-      6 => "Urgent"
+      1 => "Low",
+      2 => "Normal",
+      3 => "High",
+      4 => "Urgent"
     }
   end
 
   def assignee
     {
-      1 => "gmontard",
-      5 => "petrachi",
-      20 => "jennyfer",
-      19 => "Oliv75"
+      1 => "gmontard"
     }
   end
 
   def status
     {
-      5 => "closed",
-      14 => "open"
+      1 => "closed",
+      2 => "open"
     }
   end
 
