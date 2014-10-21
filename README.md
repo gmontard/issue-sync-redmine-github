@@ -47,28 +47,25 @@ In order to sync data between Redmine and Github we need a way to map some field
 ## Github doesn't handle priority so it will be converted to labels
 def priority
   {
-    3 => "Low",
-    4 => "Normal",
-    5 => "High",
-    6 => "Urgent"
+    1 => "Low",
+    2 => "Normal",
+    3 => "High",
+    4 => "Urgent"
   }
 end
 
 ## Map Redmine user to Github user
 def assignee
   {
-    1 => "gmontard",
-    5 => "petrachi",
-    20 => "jennyfer",
-    19 => "Oliv75"
+    1 => "gmontard"
   }
 end
 
 ## Map Redmine status to Github status (which can only be closed or open)
 def status
   {
-    5 => "closed",
-    14 => "open"
+    1 => "closed",
+    2 => "open"
   }
 end
 
