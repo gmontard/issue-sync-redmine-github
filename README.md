@@ -195,8 +195,14 @@ heroku run racksh
 
 *Do not forget to configure Webhook URL on Redmine and Github according to *Requirements* section above.*
 
+
 ### Technology
 
 - Ruby 2.1
 - Sinatra
 - Postgresql
+
+
+### License
+
+Copyright © 2014 Guillaume Montard and Vodeclic SAS released under the MIT license
