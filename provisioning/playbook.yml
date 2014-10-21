@@ -67,5 +67,5 @@
       with_items:
         - postgresql-server-dev-9.3
 
-    #- name: Adding Vagrant user to postgres user
-    #  action: sudo -u postgres createuser vagrant
+    - name: Install Heroku Toolbelt
+      action: wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
