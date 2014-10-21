@@ -77,7 +77,7 @@ end
 
 - You need to setup those environments variables in order for the App to work:
 ~~~console
-DATABASE_URL  # Database URL (ex: postgres://localhost/bugsync_development)
+DATABASE_URL  # Database URL (ex: postgres://localhost/issue-sync-redmine-github)
 DATABASE_NAME  # Database name
 DATABASE_USERNAME  # Database username (ex: postgres)
 DATABASE_PASSWORD  # Database password
