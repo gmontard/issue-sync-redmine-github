@@ -1,12 +1,11 @@
 source "https://rubygems.org"
 
-gem "sinatra"
-gem "activerecord", "~> 3.2.9"
-gem "sinatra-activerecord"
-gem "rake"
-gem "pg"
-gem "httparty"
-gem "redcarpet"
+gem "sinatra", "~> 1.4.5"
+gem "activerecord", "~> 3.2.19"
+gem "sinatra-activerecord", "~> 2.0.2"
+gem "rake", "~> 10.3.2"
+gem "pg", "~> 0.17.1"
+gem "httparty", "~> 0.13.1"
 
 group :development do
   gem "pry"
