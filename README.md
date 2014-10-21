@@ -77,6 +77,11 @@ end
 ~~~
 
 - You need to setup those environments variables in order for the App to work:
+  - DATABASE_URL => Database URL (ex: postgres://localhost/bugsync_development)
+  - DATABASE_NAME => Database name
+  - DATABASE_USERNAME => Database username (ex: postgres)
+  - DATABASE_PASSWORD => Database password
+  - DATABASE_HOST => Database host (ex: localhost)
   - REDMINE_URL => Your Redmine Public base URL
   - REDMINE_API_KEY => Your Redmine API Key is available on your account page (*/my/account*)
   - GITHUB_API_KEY => Your Github access token
@@ -102,6 +107,17 @@ vagrant up --provision
 vagrant ssh
 ~~~
 
+Edit the *config/mapping* file and create a *.env* file, below some defaults env variable:
+~~~console
+DATABASE_URL=postgres://localhost/issue-sync-redmine-github
+DATABASE_NAME=issue-sync-redmine-github
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=
+DATABASE_HOST=localhost
+~~~
+
+
+
 Finish to configure the application:
 ~~~console
 bundle install
@@ -115,7 +131,6 @@ Also a console is available:
 racksh
 ~~~
 
-**Don't forget to edit the config/mapping file and create a .env file**
 
 ### Technology
 

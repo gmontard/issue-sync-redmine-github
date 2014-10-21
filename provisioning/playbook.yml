@@ -8,6 +8,12 @@
     postgresql_admin_user: "postgres"
     postgresql_default_auth_method: "trust"
 
+    postgresql_databases:
+      - name: issue-sync-redmine-github
+
+    postgresql_users:
+      - name: vagrant
+
     rvm1_rubies:
       - 'ruby-2.1.2'
     rvm1_install_flags: '--auto-dotfiles --user-install'
@@ -61,5 +67,5 @@
       with_items:
         - postgresql-server-dev-9.3
 
-    - name: Adding Vagrant user to postgres user
-      action: sudo -u postgres createuser vagrant
+    #- name: Adding Vagrant user to postgres user
+    #  action: sudo -u postgres createuser vagrant
