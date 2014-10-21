@@ -1,3 +1,6 @@
+### App is hosted here : http://young-plateau-4825.herokuapp.com/
+--
+
 ### Purpose
 
 This Project let you **Sync Redmine issues with Github issues** with some caveats (on purpose).
