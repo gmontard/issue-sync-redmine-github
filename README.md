@@ -1,4 +1,4 @@
-### App is hosted here : http://young-plateau-4825.herokuapp.com/
+### App is hosted here : http://issue-sync-redmine-github.herokuapp.com/
 --
 
 ### Purpose
