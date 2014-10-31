@@ -69,4 +69,4 @@
         - postgresql-server-dev-9.3
 
     - name: Install Heroku Toolbelt
-      action: wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+      shell: wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
