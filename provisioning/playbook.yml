@@ -39,6 +39,7 @@
         - build-essential
         - libxml2-dev
         - libxslt1-dev
+        - wget
 
   roles:
     - { role: rvm_io.rvm1-ruby, tags: ruby, sudo: false }
