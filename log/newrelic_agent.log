@@ -1,0 +1,46 @@
+# Logfile created on 2014-11-03 14:09:01 +0000 by logger.rb/44203
+[11/03/14 14:09:01 +0000 vodev-box (9611)] INFO : Starting the New Relic agent in "development" environment.
+[11/03/14 14:09:01 +0000 vodev-box (9611)] INFO : To prevent agent startup add a NEWRELIC_AGENT_ENABLED=false environment variable or modify the "development" section of your newrelic.yml.
+[11/03/14 14:09:01 +0000 vodev-box (9611)] INFO : Reading configuration from config/newrelic.yml (/vagrant)
+[11/03/14 14:09:01 +0000 vodev-box (9611)] INFO : Environment: development
+[11/03/14 14:09:01 +0000 vodev-box (9611)] INFO : No known dispatcher detected.
+[11/03/14 14:09:01 +0000 vodev-box (9611)] INFO : Application: My Application (Development)
+[11/03/14 14:09:01 +0000 vodev-box (9611)] INFO : Installing Net instrumentation
+[11/03/14 14:09:01 +0000 vodev-box (9611)] INFO : Installing Sinatra instrumentation
+[11/03/14 14:09:01 +0000 vodev-box (9611)] INFO : Installing deferred Rack instrumentation
+[11/03/14 14:09:01 +0000 vodev-box (9611)] INFO : Installing Rack::Builder middleware instrumentation
+[11/03/14 14:09:01 +0000 vodev-box (9611)] INFO : Finished instrumentation
+[11/03/14 14:09:02 +0000 vodev-box (9611)] INFO : Doing deferred dependency-detection before Rack startup
+[11/03/14 14:09:02 +0000 vodev-box (9611)] INFO : Installing ActiveRecord instrumentation
+[11/03/14 14:13:28 +0000 vodev-box (9653)] INFO : NEWRELIC_API_KEY does not have a corresponding configuration setting (api_key does not exist).
+[11/03/14 14:13:28 +0000 vodev-box (9653)] INFO : Run `rake newrelic:config:docs` or visit https://newrelic.com/docs/ruby/ruby-agent-configuration to see a list of available configuration settings.
+[11/03/14 14:13:28 +0000 vodev-box (9653)] INFO : Starting the New Relic agent in "development" environment.
+[11/03/14 14:13:28 +0000 vodev-box (9653)] INFO : To prevent agent startup add a NEWRELIC_AGENT_ENABLED=false environment variable or modify the "development" section of your newrelic.yml.
+[11/03/14 14:13:28 +0000 vodev-box (9653)] INFO : Reading configuration from config/newrelic.yml (/vagrant)
+[11/03/14 14:13:28 +0000 vodev-box (9653)] INFO : Environment: development
+[11/03/14 14:13:28 +0000 vodev-box (9653)] INFO : No known dispatcher detected.
+[11/03/14 14:13:28 +0000 vodev-box (9653)] INFO : Application: My Application (Development)
+[11/03/14 14:13:28 +0000 vodev-box (9653)] INFO : Installing Net instrumentation
+[11/03/14 14:13:28 +0000 vodev-box (9653)] INFO : Installing Sinatra instrumentation
+[11/03/14 14:13:28 +0000 vodev-box (9653)] INFO : Installing deferred Rack instrumentation
+[11/03/14 14:13:28 +0000 vodev-box (9653)] INFO : Installing Rack::Builder middleware instrumentation
+[11/03/14 14:13:28 +0000 vodev-box (9653)] INFO : Finished instrumentation
+[11/03/14 14:13:29 +0000 vodev-box (9653)] INFO : Doing deferred dependency-detection before Rack startup
+[11/03/14 14:13:29 +0000 vodev-box (9653)] INFO : Installing ActiveRecord instrumentation
+[11/03/14 14:13:32 +0000 vodev-box (9653)] INFO : Reporting to: https://rpm.newrelic.com/accounts/810406/applications/11631689
+[11/03/14 14:13:35 +0000 vodev-box (9659)] INFO : NEWRELIC_API_KEY does not have a corresponding configuration setting (api_key does not exist).
+[11/03/14 14:13:35 +0000 vodev-box (9659)] INFO : Run `rake newrelic:config:docs` or visit https://newrelic.com/docs/ruby/ruby-agent-configuration to see a list of available configuration settings.
+[11/03/14 14:13:35 +0000 vodev-box (9659)] INFO : Starting the New Relic agent in "development" environment.
+[11/03/14 14:13:35 +0000 vodev-box (9659)] INFO : To prevent agent startup add a NEWRELIC_AGENT_ENABLED=false environment variable or modify the "development" section of your newrelic.yml.
+[11/03/14 14:13:35 +0000 vodev-box (9659)] INFO : Reading configuration from config/newrelic.yml (/vagrant)
+[11/03/14 14:13:35 +0000 vodev-box (9659)] INFO : Environment: development
+[11/03/14 14:13:35 +0000 vodev-box (9659)] INFO : No known dispatcher detected.
+[11/03/14 14:13:35 +0000 vodev-box (9659)] INFO : Application: My Application (Development)
+[11/03/14 14:13:35 +0000 vodev-box (9659)] INFO : Installing Net instrumentation
+[11/03/14 14:13:35 +0000 vodev-box (9659)] INFO : Installing Sinatra instrumentation
+[11/03/14 14:13:35 +0000 vodev-box (9659)] INFO : Installing deferred Rack instrumentation
+[11/03/14 14:13:35 +0000 vodev-box (9659)] INFO : Installing Rack::Builder middleware instrumentation
+[11/03/14 14:13:35 +0000 vodev-box (9659)] INFO : Finished instrumentation
+[11/03/14 14:13:36 +0000 vodev-box (9659)] INFO : Doing deferred dependency-detection before Rack startup
+[11/03/14 14:13:36 +0000 vodev-box (9659)] INFO : Installing ActiveRecord instrumentation
+[11/03/14 14:13:37 +0000 vodev-box (9659)] INFO : Reporting to: https://rpm.newrelic.com/accounts/810406/applications/11631689

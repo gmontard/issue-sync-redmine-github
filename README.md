@@ -93,6 +93,7 @@ REDMINE_API_KEY  # Your Redmine API Key is available on your account page (*/my/
 GITHUB_API_KEY  # Your Github access token
 GITHUB_OWNER  # Your Github Username
 GITHUB_REPO  # Your Github project Repo (for ex: *gmontard/issue-sync-redmine-github*)
+NEWRELIC_API_KEY # NewRelic API KEY
 ~~~
 
 - In development you should creare a *.env* file and set those variables (see section *Running in Development*)
@@ -162,6 +163,7 @@ heroku config:set REDMINE_API_KEY=
 heroku config:set GITHUB_OWNER=
 heroku config:set GITHUB_REPO=
 heroku config:set GITHUB_API_KEY=
+heroku config:set NEWRELIC_API_KEY=
 ~~~
 
 - Deploy in production and run migrations
