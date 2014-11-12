@@ -7,6 +7,7 @@ gem "rake", "~> 10.3.2"
 gem "pg", "~> 0.17.1"
 gem "httparty", "~> 0.13.1"
 gem "racksh"
+gem 'newrelic_rpm'
 
 group :development do
   gem "pry"

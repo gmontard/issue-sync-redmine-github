@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'newrelic_rpm'
 require 'httparty'
 require 'pry' if development?
 require 'sinatra/activerecord'
