@@ -66,15 +66,18 @@ class RedmineIssue
 Attachment: #{attachment})"
     }
 
-    data += "
+    if comments.present?
+
+      data += "
 \n
 --
-#### Comments" if comments.present?
+#### Comments"
 
-    comments.each_with_index{|comment, i|
-       data += "\n *#{comment[:author]} - #{comment[:date].to_date}*
+      comments.each_with_index{|comment, i|
+        data += "\n *#{comment[:author]} - #{comment[:date].to_date}*
 #{comment[:comment]}\n\n--"
-    }
+      }
+    end
 
     data += "\n\n*Comment issue here: #{ENV['REDMINE_URL']}/issues/#{id}*"
 
