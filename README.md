@@ -1,6 +1,3 @@
-### App is hosted here : http://issue-sync-redmine-github.herokuapp.com/
---
-
 ### Purpose
 
 This Project let you **Sync Redmine issues with Github issues** with some caveats (on purpose).
